@@ -1,95 +1,76 @@
 # DeepSeekCode
 
-[English](README.md) | [简体中文](README_CN.md)
+[简体中文](README.md) | [English](README_EN.md)
 
-A local CLI coding agent adapted from the Claude Code codebase, routing model requests to DeepSeek's Anthropic-compatible API.
+基于 Claude Code 代码库改造的本地 CLI 编程代理，将模型请求路由到 DeepSeek 的 Anthropic 兼容 API。
 
-> Community fork — not an official DeepSeek or Anthropic product.
+> 社区独立 fork，非 DeepSeek 或 Anthropic 官方产品。
 
-## Features
+## 功能特性
 
-- Project-aware chat with tool execution and permission prompts
-- File editing, sub-agents, MCP support, and `-p` non-interactive mode
-- Local config isolation under `.deepseek-code`
-- Automatic sanitization of unsupported content blocks
+- 项目感知对话，支持工具执行和权限确认
+- **Thinking 推理模式**，可配置推理等级（low / high / max）
+- 文件编辑、子代理、MCP 支持、`-p` 非交互模式
+- 1M 上下文窗口，最大 384K 输出 token
+- 本地配置隔离至 `.deepseek-code` 目录
 
-## Requirements
-
-- Node.js >= 18
-- npm
-- DeepSeek API key
-
-## Install
+## 快速开始
 
 ```bash
 git clone https://github.com/linyan185/deepseekcode.git
 cd deepseekcode
 npm ci --ignore-scripts
 npm run check
-```
 
-## Usage
-
-Set your API key:
-
-```bash
 export DEEPSEEK_API_KEY="sk-..."
-```
 
-Run from the project you want to work in:
-
-```bash
 cd /path/to/your/project
 /path/to/deepseekcode/run-deepseek.cmd
 ```
 
-One-shot mode:
+一次性命令模式：
 
 ```bash
-/path/to/deepseekcode/run-deepseek.cmd -p "summarize this repository"
+deepseek-code -p "总结这个仓库"
 ```
 
-### Optional: Global Link
+## 模型别名
 
-```bash
-npm link
-deepseek-code --version
-```
-
-## Configuration
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `DEEPSEEK_API_KEY` | — | Your DeepSeek API key |
-| `DEEPSEEK_BASE_URL` | `https://api.deepseek.com/anthropic` | API endpoint |
-| `DEEPSEEK_MODEL` | `deepseek-v4-pro` | Model to use |
-| `DEEPSEEK_CODE_CONFIG_DIR` | `~/.deepseek-code` | Local config directory |
-
-### Model Aliases
-
-| Alias | DeepSeek Model |
-|-------|---------------|
+| 别名 | DeepSeek 模型 |
+|------|--------------|
 | `pro` | `deepseek-v4-pro` |
 | `flash` | `deepseek-v4-flash` |
 
-Legacy Claude aliases (`sonnet`, `opus`, `haiku`, `best`) are still supported for compatibility.
+旧版 Claude 别名（`sonnet`、`opus`、`haiku`、`best`）仍然兼容可用。
 
-## How It Works
+## 文档
 
-- Routes API calls through a DeepSeek adapter layer
-- Skips Anthropic OAuth/keychain auth and analytics
-- Sends DeepSeek-compatible effort controls, defaulting to `max`
-- Converts unsupported blocks (image, document, thinking, server-tool) to text placeholders
-- Sub-agents inherit all DeepSeek environment variables
+| 文档 | 内容 |
+|------|------|
+| [快速开始](docs/getting-started.md) | 安装、首次运行、API key 设置 |
+| [配置参考](docs/configuration.md) | 环境变量、模型别名、settings.json |
+| [使用指南](docs/usage.md) | 交互模式、CLI 参数、斜杠命令、工具 |
+| [推理模式](docs/thinking-and-effort.md) | Thinking 模式、Effort 等级、输出限制 |
+| [MCP 与高级功能](docs/mcp-and-advanced.md) | MCP 服务器、子代理、Hooks、Worktree、CI/CD |
+| [常见问题](docs/faq.md) | 故障排除、兼容性、常见问题 |
 
-## Build
+## 工作原理
+
+- 通过 Anthropic SDK 将 API 调用路由到 DeepSeek 适配层
+- 默认开启 Thinking 推理模式，effort 等级为 `high`
+- Thinking 开启时仍支持自定义 temperature（0.0-2.0）
+- 自动前缀缓存（DeepSeek 服务端，无需 `cache_control`）
+- 将不支持的内容块（image、document、server-tool）转为文本占位
+- 子代理继承所有 DeepSeek 环境变量
+
+## 构建
 
 ```bash
 npm run build
 ```
 
-Generated directories (`dist/`, `build-src/`) are git-ignored.
+生成目录（`dist/`、`build-src/`）已被 git 忽略。
 
-## License
+## 许可证
 
 [MIT](LICENSE)
