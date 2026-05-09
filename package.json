@@ -1,35 +1,47 @@
 {
   "name": "deepseekcode",
-  "version": "0.0.1",
-  "description": "Local CLI coding agent adapted to run against DeepSeek's Anthropic-compatible API",
+  "version": "0.1.0",
+  "description": "Local CLI coding agent powered by DeepSeek V4, adapted from Claude Code",
   "type": "module",
-  "private": true,
   "license": "MIT",
   "keywords": [
     "deepseek",
     "coding-agent",
     "cli",
-    "mcp"
+    "mcp",
+    "ai",
+    "code-assistant"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QingJ01/DeepSeekCode.git"
+  },
+  "homepage": "https://github.com/QingJ01/DeepSeekCode#readme",
+  "bugs": {
+    "url": "https://github.com/QingJ01/DeepSeekCode/issues"
+  },
   "bin": {
-    "deepseek": "scripts/run-deepseek.mjs",
+    "deepseekcode": "scripts/run-deepseek.mjs",
     "deepseek-code": "scripts/run-deepseek.mjs"
   },
+  "files": [
+    "dist/cli.js",
+    "dist/cli.js.map",
+    "scripts/run-deepseek.mjs",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "prepare-src": "node scripts/prepare-src.mjs",
     "build": "node scripts/build.mjs",
     "check": "node scripts/build.mjs && node dist/cli.js --version",
-    "start": "node dist/cli.js"
+    "start": "node dist/cli.js",
+    "prepublishOnly": "npm run build"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "devDependencies": {
-    "@types/node": "^25.6.0",
-    "esbuild": "^0.27.7",
-    "typescript": "^6.0.2"
-  },
-  "dependencies": {
     "@alcalzone/ansi-tokenize": "^0.3.0",
     "@anthropic-ai/bedrock-sdk": "^0.29.0",
     "@anthropic-ai/foundry-sdk": "^0.2.3",
@@ -66,6 +78,7 @@
     "@opentelemetry/semantic-conventions": "^1.40.0",
     "@smithy/core": "^3.23.17",
     "@smithy/node-http-handler": "^4.6.1",
+    "@types/node": "^25.6.0",
     "ajv": "^8.20.0",
     "asciichart": "^1.5.25",
     "auto-bind": "^5.0.1",
@@ -81,6 +94,7 @@
     "diff": "^9.0.0",
     "emoji-regex": "^10.6.0",
     "env-paths": "^4.0.0",
+    "esbuild": "^0.27.7",
     "execa": "^9.6.1",
     "fflate": "^0.8.2",
     "figures": "^6.1.0",
@@ -115,6 +129,7 @@
     "tree-kill": "^1.2.2",
     "turndown": "^7.2.4",
     "type-fest": "^5.6.0",
+    "typescript": "^6.0.2",
     "undici": "^8.1.0",
     "usehooks-ts": "^3.1.1",
     "vscode-jsonrpc": "^8.2.1",
