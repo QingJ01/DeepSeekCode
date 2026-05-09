@@ -1,0 +1,28 @@
+node_modules/
+build-src/
+dist/
+
+# Local secrets and environment
+.env
+.env.*
+!.env.example
+
+# Logs and local output
+*.log
+logs/
+test-output.txt
+check-output.txt
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local editor/system files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local DeepSeekCode/Claude config snapshots
+.deepseek-code/
+.claude/
