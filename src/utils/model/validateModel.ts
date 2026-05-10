@@ -24,7 +24,7 @@ const validModelCache = new Map<string, boolean>()
  */
 export async function validateModel(
   model: string,
-): Promise<{ valid: boolean; error?: string; warning?: string }> {
+): Promise<{ valid: boolean; error?: string }> {
   const normalizedModel = model.trim()
 
   // Empty model is invalid
@@ -46,11 +46,16 @@ export async function validateModel(
     return { valid: true }
   }
 
-  // DeepSeek: unrecognized model names are silently remapped to deepseek-v4-flash
-  if (getAPIProvider() === 'deepseek' && !KNOWN_DEEPSEEK_MODELS.has(lowerModel)) {
+  // DeepSeek: validate against known models — the API silently remaps unknown
+  // names to deepseek-v4-flash instead of returning 404, so API-based
+  // validation would falsely report any name as valid.
+  if (getAPIProvider() === 'deepseek') {
+    if (KNOWN_DEEPSEEK_MODELS.has(lowerModel)) {
+      return { valid: true }
+    }
     return {
-      valid: true,
-      warning: `模型 '${normalizedModel}' 不是已知的 DeepSeek 模型，服务端会将其映射为 deepseek-v4-flash。已知模型：deepseek-v4-pro, deepseek-v4-flash`,
+      valid: false,
+      error: `模型 '${normalizedModel}' 不是已知的 DeepSeek 模型（会被服务端静默映射为 deepseek-v4-flash）。可用模型：deepseek-v4-pro, deepseek-v4-flash`,
     }
   }
 
