@@ -33,6 +33,7 @@
 | `DISABLE_TELEMETRY` | 设为 `1` 关闭遥测 |
 | `MCP_TIMEOUT` | MCP 连接超时 |
 | `MCP_TOOL_TIMEOUT` | MCP 工具调用超时 |
+| `DEEPSEEK_USE_FULL_PRICE` | 设为 `1` 使用 DeepSeek V4 Pro 原价（折扣期结束后设置） |
 
 ## 模型别名
 
@@ -68,6 +69,18 @@ export DEEPSEEK_MODEL="deepseek-v4-flash"
 
 - DeepSeek V4 模型原生支持 1M 上下文，无需 `[1m]` 后缀
 - 最大输出 token 上限为 **384K**（默认 64K）
+
+### 费用显示
+
+DeepSeek 模式下，费用以人民币（¥）显示。V4 Pro 当前享受折扣价（至 2026-05-31）：
+
+| 模型 | 输入（缓存未命中） | 输入（缓存命中） | 输出 |
+|------|-------------------|-----------------|------|
+| deepseek-v4-pro（折扣） | ¥3.00/Mtok | ¥0.025/Mtok | ¥6.00/Mtok |
+| deepseek-v4-pro（原价） | ¥12.00/Mtok | ¥0.10/Mtok | ¥24.00/Mtok |
+| deepseek-v4-flash | ¥1.00/Mtok | ¥0.02/Mtok | ¥2.00/Mtok |
+
+折扣期结束后设置 `DEEPSEEK_USE_FULL_PRICE=1` 切换到原价。
 
 ## 配置文件
 

@@ -112,6 +112,16 @@ npm run test:release   # 运行所有发布测试
 | `src/utils/thinking.ts` | 始终支持 thinking，不支持 adaptive thinking |
 | `src/utils/context.ts` | 1M 上下文窗口，64K 默认 / 384K 最大输出 |
 
+### 费用与错误处理
+
+| 文件 | DeepSeek 行为 |
+|------|---------------|
+| `src/utils/modelCost.ts` | 人民币定价常量，折扣/原价切换 |
+| `src/cost-tracker.ts` | 人民币格式化，缓存命中率统计 |
+| `src/services/api/withRetry.ts` | 402 不重试，429 纯指数退避，跳过 529 回退 |
+| `src/services/api/errors.ts` | 402 余额不足分类，429 中文提示 |
+| `src/services/tokenEstimation.ts` | UTF-8 字节估算，跳过 API 计数 |
+
 ### 配置隔离
 
 | 文件 | 职责 |
