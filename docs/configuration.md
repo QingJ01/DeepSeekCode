@@ -8,7 +8,7 @@
 |------|--------|------|
 | `DEEPSEEK_API_KEY` | — | **必填**，DeepSeek API 密钥 |
 | `DEEPSEEK_BASE_URL` | `https://api.deepseek.com/anthropic` | API 端点地址 |
-| `DEEPSEEK_MODEL` | `deepseek-v4-pro[1m]` | 默认模型 |
+| `DEEPSEEK_MODEL` | `deepseek-v4-pro` | 默认模型 |
 | `DEEPSEEK_CODE_CONFIG_DIR` | `~/.deepseek-code` | 本地配置目录 |
 | `CLAUDE_CODE_USE_DEEPSEEK` | `1`（启动器自动设置） | 显式选择 DeepSeek provider |
 
@@ -16,7 +16,7 @@
 
 | 变量 | 默认值 | 说明 |
 |------|--------|------|
-| `CLAUDE_CODE_EFFORT_LEVEL` | `high` | 推理等级：`low`、`medium`、`high`、`max` |
+| `CLAUDE_CODE_EFFORT_LEVEL` | `max` | 推理等级：`low`、`medium`、`high`、`max` |
 | `CLAUDE_CODE_DISABLE_THINKING` | — | 设为 `1` 关闭 thinking 推理模式 |
 | `MAX_THINKING_TOKENS` | — | 自定义 thinking token 预算 |
 | `CLAUDE_CODE_MAX_OUTPUT_TOKENS` | — | 自定义最大输出 token（上限 384K） |
@@ -26,6 +26,7 @@
 | 变量 | 说明 |
 |------|------|
 | `CLAUDE_CODE_SUBAGENT_MODEL` | 子代理使用的模型（如 `deepseek-v4-flash`） |
+| `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` | 设为 `1` 禁用遥测、更新检查等非必要网络请求（启动器默认设置） |
 | `BASH_DEFAULT_TIMEOUT_MS` | Bash 命令默认超时（毫秒） |
 | `BASH_MAX_TIMEOUT_MS` | Bash 命令最大超时 |
 | `BASH_MAX_OUTPUT_LENGTH` | Bash 输出最大长度 |
@@ -65,7 +66,7 @@ export DEEPSEEK_MODEL="deepseek-v4-flash"
 
 两个模型都支持 **1M（100 万）token** 上下文窗口：
 
-- 默认模型名 `deepseek-v4-pro[1m]` 中的 `[1m]` 后缀启用 1M 上下文
+- DeepSeek V4 模型原生支持 1M 上下文，无需 `[1m]` 后缀
 - 最大输出 token 上限为 **384K**（默认 64K）
 
 ## 配置文件

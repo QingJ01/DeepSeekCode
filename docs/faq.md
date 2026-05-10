@@ -175,3 +175,17 @@ export DEEPSEEK_BASE_URL=https://your-proxy.example.com/anthropic
 ```bash
 rm -rf ~/.deepseek-code
 ```
+
+## 开发与贡献
+
+### Q: 构建产物在哪里？
+
+`dist/cli.js` 是最终打包文件，`build-src/` 是构建中间产物，两者都被 git 忽略。详见[架构与开发指南](architecture.md)。
+
+### Q: 如何添加新的 DeepSeek 适配逻辑？
+
+在相关源文件中添加 `if (getAPIProvider() === 'deepseek')` 分支。路径相关的代码使用 `getProjectConfigDirName()` 而非硬编码 `.claude`。修改后运行 `npm test` 确认测试通过。
+
+### Q: 为什么不用 patch 文件？
+
+所有适配修改直接嵌入 `src/` 目录，便于 IDE 跳转和调试。同步上游时需要手动处理约 10 个文件的冲突，但这些文件的修改都集中在 `getAPIProvider() === 'deepseek'` 分支中，比较容易识别。

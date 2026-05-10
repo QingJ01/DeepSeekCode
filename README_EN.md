@@ -86,12 +86,13 @@ Legacy Claude aliases (`sonnet`, `opus`, `haiku`, `best`) are still supported.
 | [Usage Guide](docs/usage.md) | Interactive mode, CLI flags, slash commands, tools |
 | [Thinking & Effort](docs/thinking-and-effort.md) | Thinking mode, effort levels, output limits |
 | [MCP & Advanced](docs/mcp-and-advanced.md) | MCP servers, sub-agents, hooks, worktrees, CI/CD |
+| [Architecture](docs/architecture.md) | Project structure, build pipeline, adapter internals, dev guide |
 | [FAQ](docs/faq.md) | Troubleshooting, compatibility, common questions |
 
 ## How It Works
 
 - Routes API calls through a DeepSeek adapter using the Anthropic SDK
-- Thinking mode enabled by default with `high` effort
+- Thinking mode enabled by default with `max` effort
 - Supports temperature 0.0-2.0 even with thinking enabled
 - Automatic prefix caching is handled server-side by DeepSeek, no `cache_control` needed
 - Converts unsupported content blocks (image, document, server-tool) to text placeholders
@@ -104,6 +105,20 @@ npm run build
 ```
 
 Generated directories (`dist/`, `build-src/`) are git-ignored.
+
+## Contributing
+
+Issues and pull requests are welcome. Development workflow:
+
+```bash
+git clone https://github.com/QingJ01/DeepSeekCode.git
+cd DeepSeekCode
+npm ci --ignore-scripts
+npm run check          # Build and verify
+npm test               # Run test suite
+```
+
+See [Architecture & Dev Guide](docs/architecture.md) for details.
 
 ## License
 
