@@ -44,8 +44,16 @@ import {
 import { isFastModeEnabled } from './utils/fastMode.js'
 import { formatDuration, formatNumber } from './utils/format.js'
 import type { FpsMetrics } from './utils/fpsTracker.js'
-import { getCanonicalName } from './utils/model/model.js'
-import { calculateUSDCost, isDeepSeekCurrency } from './utils/modelCost.js'
+import {
+  getCanonicalName,
+  getDefaultMainLoopModelSetting,
+} from './utils/model/model.js'
+import { getAPIProvider } from './utils/model/providers.js'
+import {
+  calculateUSDCost,
+  getModelCosts,
+  isDeepSeekCurrency,
+} from './utils/modelCost.js'
 export {
   getTotalCostUSD as getTotalCost,
   getTotalDuration,
@@ -235,12 +243,34 @@ export function formatTotalCost(): string {
 
   const modelUsageDisplay = formatModelUsage()
 
+  let cacheStatsDisplay = ''
+  if (getAPIProvider() === 'deepseek') {
+    const cacheRead = getTotalCacheReadInputTokens()
+    const cacheCreation = getTotalCacheCreationInputTokens()
+    const directInput = getTotalInputTokens()
+    const totalInput = cacheRead + cacheCreation + directInput
+    if (totalInput > 0) {
+      const hitRate = (cacheRead / totalInput) * 100
+      const model = getDefaultMainLoopModelSetting()
+      const costs = getModelCosts(model, {
+        input_tokens: 0,
+        output_tokens: 0,
+      } as Usage)
+      const savings =
+        (cacheRead / 1_000_000) *
+        (costs.inputTokens - costs.promptCacheReadTokens)
+      cacheStatsDisplay =
+        `\nCache hit rate:         ${hitRate.toFixed(1)}% (${formatNumber(cacheRead)} / ${formatNumber(totalInput)} input tokens)` +
+        `\nCache savings:         ${formatCost(savings)}`
+    }
+  }
+
   return chalk.dim(
     `Total cost:            ${costDisplay}\n` +
       `Total duration (API):  ${formatDuration(getTotalAPIDuration())}
 Total duration (wall): ${formatDuration(getTotalDuration())}
 Total code changes:    ${getTotalLinesAdded()} ${getTotalLinesAdded() === 1 ? 'line' : 'lines'} added, ${getTotalLinesRemoved()} ${getTotalLinesRemoved() === 1 ? 'line' : 'lines'} removed
-${modelUsageDisplay}`,
+${modelUsageDisplay}${cacheStatsDisplay}`,
   )
 }
 
