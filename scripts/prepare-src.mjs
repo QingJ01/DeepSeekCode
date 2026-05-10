@@ -16,7 +16,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '..')
 const SRC = path.join(ROOT, 'src')
 
-const VERSION = '0.1.0'
+const PACKAGE_JSON = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'))
+const VERSION = PACKAGE_JSON.version
+const PACKAGE_NAME = PACKAGE_JSON.name
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -56,8 +58,8 @@ function patchFile(filePath) {
     'MACRO.BUILD_TIME': `'${new Date().toISOString()}'`,
     'MACRO.FEEDBACK_CHANNEL': `'https://github.com/anthropics/claude-code/issues'`,
     'MACRO.ISSUES_EXPLAINER': `'https://github.com/anthropics/claude-code/issues/new/choose'`,
-    'MACRO.NATIVE_PACKAGE_URL': `'@anthropic-ai/claude-code'`,
-    'MACRO.PACKAGE_URL': `'@anthropic-ai/claude-code'`,
+    'MACRO.NATIVE_PACKAGE_URL': `'${PACKAGE_NAME}'`,
+    'MACRO.PACKAGE_URL': `'${PACKAGE_NAME}'`,
     'MACRO.VERSION_CHANGELOG': `''`,
   }
 

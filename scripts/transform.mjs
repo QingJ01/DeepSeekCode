@@ -17,7 +17,9 @@ import { fileURLToPath } from 'node:url'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 
-const VERSION = '0.1.0'
+const PACKAGE_JSON = JSON.parse(await readFile(join(ROOT, 'package.json'), 'utf8'))
+const VERSION = PACKAGE_JSON.version
+const PACKAGE_NAME = PACKAGE_JSON.name
 
 // ── Step 1: Clean & Create build directory ─────────────────────────────────
 
@@ -80,8 +82,8 @@ const MACRO = {
   ISSUES_EXPLAINER: 'https://github.com/anthropics/claude-code/issues/new/choose',
   FEEDBACK_CHANNEL_URL: 'https://github.com/anthropics/claude-code/issues',
   ISSUES_EXPLAINER_URL: 'https://github.com/anthropics/claude-code/issues/new/choose',
-  NATIVE_PACKAGE_URL: '@anthropic-ai/claude-code',
-  PACKAGE_URL: '@anthropic-ai/claude-code',
+  NATIVE_PACKAGE_URL: '${PACKAGE_NAME}',
+  PACKAGE_URL: '${PACKAGE_NAME}',
   VERSION_CHANGELOG: '',
 }
 

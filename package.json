@@ -26,7 +26,6 @@
   },
   "files": [
     "dist/cli.js",
-    "dist/cli.js.map",
     "scripts/run-deepseek.mjs",
     "LICENSE",
     "README.md"
@@ -36,7 +35,10 @@
     "build": "node scripts/build.mjs",
     "check": "node scripts/build.mjs && node dist/cli.js --version",
     "start": "node dist/cli.js",
-    "prepublishOnly": "npm run build"
+    "test": "npm run test:release",
+    "test:release": "node scripts/deepseek-isolation.test.mjs && node scripts/logo-alignment.test.mjs && node scripts/version.test.mjs && node scripts/release-workflow.test.mjs && node scripts/verify-release-tag.test.mjs",
+    "verify-release-tag": "node scripts/verify-release-tag.mjs",
+    "prepublishOnly": "npm run check && npm run test:release"
   },
   "engines": {
     "node": ">=18.0.0"

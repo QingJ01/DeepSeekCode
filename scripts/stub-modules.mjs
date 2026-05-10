@@ -15,6 +15,8 @@ import { execSync } from 'node:child_process'
 
 const ROOT = join(import.meta.dirname, '..')
 const BUILD_SRC = join(ROOT, 'build-src', 'src')
+const PACKAGE_JSON = JSON.parse(await readFile(join(ROOT, 'package.json'), 'utf8'))
+const VERSION = PACKAGE_JSON.version
 
 async function exists(p) { try { await stat(p); return true } catch { return false } }
 
@@ -138,7 +140,7 @@ try {
     `--outfile="${OUT}"`,
     '--packages=external',
     '--external:bun:*',
-    '--banner:js=$\'#!/usr/bin/env node\\n// Claude Code v0.1.0 (built from source)\\n// Copyright (c) Anthropic PBC. All rights reserved.\\n\'',
+    `--banner:js=$'#!/usr/bin/env node\\n// DeepSeek Code v${VERSION} (built from source)\\n'`,
     '--allow-overwrite',
     '--log-level=warning',
     '--sourcemap',

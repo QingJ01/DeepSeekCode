@@ -24,13 +24,18 @@ jobs:
       - name: Install dependencies
         run: npm ci --ignore-scripts
 
-      - name: Build
-        run: npm run build
+      - name: Verify release tag
+        run: npm run verify-release-tag
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
 
-      - name: Verify CLI
-        run: node dist/cli.js --version
+      - name: Test release checks
+        run: npm run test:release
+
+      - name: Check
+        run: npm run check
 
       - name: Publish
-        run: npm publish --provenance --access public
+        run: npm publish --provenance --access public --ignore-scripts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

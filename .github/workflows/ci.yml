@@ -25,8 +25,8 @@ jobs:
       - name: Install dependencies
         run: npm ci --ignore-scripts
 
-      - name: Build
-        run: npm run build
+      - name: Test release checks
+        run: npm run test:release
 
-      - name: Verify CLI
-        run: node dist/cli.js --version
+      - name: Check
+        run: npm run check

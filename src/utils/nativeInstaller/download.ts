@@ -201,8 +201,8 @@ export async function downloadVersionFromArtifactory(
   await fs.mkdir(stagingPath)
 
   const packageJson = {
-    name: 'claude-native-installer',
-    version: '0.1.0',
+    name: 'deepseekcode-native-installer',
+    version: MACRO.VERSION,
     dependencies: {
       [MACRO.NATIVE_PACKAGE_URL!]: version,
     },
@@ -210,14 +210,14 @@ export async function downloadVersionFromArtifactory(
 
   // Create package-lock.json with integrity verification for platform-specific package
   const packageLock = {
-    name: 'claude-native-installer',
-    version: '0.1.0',
+    name: 'deepseekcode-native-installer',
+    version: MACRO.VERSION,
     lockfileVersion: 3,
     requires: true,
     packages: {
       '': {
-        name: 'claude-native-installer',
-        version: '0.1.0',
+        name: 'deepseekcode-native-installer',
+        version: MACRO.VERSION,
         dependencies: {
           [MACRO.NATIVE_PACKAGE_URL!]: version,
         },

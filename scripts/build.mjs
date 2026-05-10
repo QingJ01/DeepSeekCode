@@ -7,7 +7,9 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
-const VERSION = '0.1.0'
+const PACKAGE_JSON = JSON.parse(await readFile(join(ROOT, 'package.json'), 'utf8'))
+const VERSION = PACKAGE_JSON.version
+const PACKAGE_NAME = PACKAGE_JSON.name
 const BUILD = join(ROOT, 'build-src')
 const ENTRY = join(BUILD, 'entry.ts')
 const OUT_DIR = join(ROOT, 'dist')
@@ -154,8 +156,8 @@ async function prepareBuildSource() {
     'MACRO.ISSUES_EXPLAINER': `'https://github.com/anthropics/claude-code/issues/new/choose'`,
     'MACRO.FEEDBACK_CHANNEL_URL': `'https://github.com/anthropics/claude-code/issues'`,
     'MACRO.ISSUES_EXPLAINER_URL': `'https://github.com/anthropics/claude-code/issues/new/choose'`,
-    'MACRO.NATIVE_PACKAGE_URL': `'@anthropic-ai/claude-code'`,
-    'MACRO.PACKAGE_URL': `'@anthropic-ai/claude-code'`,
+    'MACRO.NATIVE_PACKAGE_URL': `'${PACKAGE_NAME}'`,
+    'MACRO.PACKAGE_URL': `'${PACKAGE_NAME}'`,
     'MACRO.VERSION_CHANGELOG': `''`,
   }
 
@@ -311,7 +313,7 @@ if (!succeeded) {
   process.exit(1)
 }
 
-const banner = `#!/usr/bin/env node\n// Claude Code v${VERSION} (built from source)\n// Copyright (c) Anthropic PBC. All rights reserved.\n`
+const banner = `#!/usr/bin/env node\n// DeepSeek Code v${VERSION} (built from source)\n`
 const output = await readFile(OUT_FILE, 'utf8')
 if (!output.startsWith('#!/usr/bin/env node')) {
   await writeFile(OUT_FILE, banner + output, 'utf8')
