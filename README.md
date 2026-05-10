@@ -95,7 +95,7 @@ node scripts/run-deepseek.mjs
 
 - 通过 Anthropic SDK 将 API 调用路由到 DeepSeek 适配层
 - 默认开启 Thinking 推理模式，effort 等级为 `max`
-- Thinking 开启时仍支持自定义 temperature（0.0-2.0）
+- Thinking 模式下 temperature 被服务端忽略（非 thinking 模式支持 0.0-2.0）
 - 自动前缀缓存由 DeepSeek 服务端处理，工具定义按字典序排列以最大化缓存命中
 - 费用以人民币（¥）显示，`/cost` 命令展示缓存命中率和节省金额
 - 将不支持的内容块（image、document、server-tool）转为文本占位

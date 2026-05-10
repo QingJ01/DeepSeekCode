@@ -1710,7 +1710,15 @@ async function* queryModel(
     // without notifying the model launch DRI and research. This is a sensitive
     // setting that can greatly affect model quality and bashing.
     if (hasThinking && modelSupportsThinking(options.model)) {
-      if (
+      if (getAPIProvider() === 'deepseek') {
+        // DeepSeek controls thinking depth via output_config.effort alone;
+        // budget_tokens is ignored server-side. Send minimal thinking param
+        // so the SDK knows to expect thinking blocks in the response.
+        thinking = {
+          budget_tokens: maxOutputTokens - 1,
+          type: 'enabled',
+        } satisfies BetaMessageStreamParams['thinking']
+      } else if (
         !isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING) &&
         modelSupportsAdaptiveThinking(options.model)
       ) {
@@ -1796,12 +1804,11 @@ async function* queryModel(
       )
     }
 
-    // Claude requires temperature: 1 when thinking is enabled.
-    // DeepSeek has no such constraint and supports 0.0-2.0 with thinking.
-    const temperature =
-      !hasThinking || getAPIProvider() === 'deepseek'
-        ? (options.temperatureOverride ?? 1)
-        : undefined
+    // When thinking is enabled: Claude requires temperature=1 (SDK default),
+    // DeepSeek silently ignores temperature — don't send it either way.
+    const temperature = !hasThinking
+      ? (options.temperatureOverride ?? 1)
+      : undefined
 
     lastRequestBetas = betasParams
 

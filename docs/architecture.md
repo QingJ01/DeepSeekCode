@@ -91,7 +91,7 @@ npm run test:release   # 运行所有发布测试
 - **内容清洗**：`sanitizeMessagesForDeepSeek()` 将不支持的内容块（image、document、redacted_thinking）替换为文本占位
 - **缓存**：关闭 `cache_control`（DeepSeek 服务端自动前缀缓存）
 - **用量映射**：`prompt_cache_hit_tokens` / `prompt_cache_miss_tokens` → `cache_read_input_tokens` / `cache_creation_input_tokens`
-- **Temperature**：DeepSeek 允许 thinking + 自定义 temperature（0.0-2.0），跳过 Claude 的 temperature=1 约束
+- **Temperature**：DeepSeek thinking 模式下 temperature 被服务端忽略，代码不发送该参数；非 thinking 模式支持 0.0-2.0
 - **API 路径**：使用 `anthropic.messages` 标准路径，而非 `anthropic.beta.messages`
 - **元数据**：跳过 `metadata` 和 advisor beta header
 
@@ -109,7 +109,7 @@ npm run test:release   # 运行所有发布测试
 | 文件 | DeepSeek 行为 |
 |------|---------------|
 | `src/utils/effort.ts` | 始终支持 effort，默认 `max` |
-| `src/utils/thinking.ts` | 始终支持 thinking，不支持 adaptive thinking |
+| `src/utils/thinking.ts` | 始终支持 thinking，不支持 adaptive thinking；budget_tokens 由 effort 替代 |
 | `src/utils/context.ts` | 1M 上下文窗口，64K 默认 / 384K 最大输出 |
 
 ### 费用与错误处理

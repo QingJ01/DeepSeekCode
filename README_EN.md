@@ -95,7 +95,7 @@ Legacy Claude aliases (`sonnet`, `opus`, `haiku`, `best`) are still supported.
 
 - Routes API calls through a DeepSeek adapter using the Anthropic SDK
 - Thinking mode enabled by default with `max` effort
-- Supports temperature 0.0-2.0 even with thinking enabled
+- Temperature is ignored server-side when thinking is active (0.0-2.0 supported in non-thinking mode)
 - Automatic prefix caching is handled server-side by DeepSeek; tools are sorted alphabetically to maximize cache hits
 - Costs displayed in CNY (¥); `/cost` shows cache hit rate and savings
 - Converts unsupported content blocks (image, document, server-tool) to text placeholders

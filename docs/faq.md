@@ -78,7 +78,7 @@ export CLAUDE_CODE_MAX_OUTPUT_TOKENS=128000
 
 ### Q: 提示 temperature 相关错误
 
-DeepSeek V4 支持 0.0-2.0 范围的 temperature，且 thinking 开启时也可以设置 temperature。如果遇到问题，检查是否有其他工具设置了非法值。
+DeepSeek V4 在非 thinking 模式下支持 0.0-2.0 范围的 temperature。**Thinking 开启时 temperature 参数会被服务端忽略**（设置不会报错，但不生效）。如需自定义 temperature，请先关闭 thinking：`export CLAUDE_CODE_DISABLE_THINKING=1`。
 
 ## 功能兼容性
 
