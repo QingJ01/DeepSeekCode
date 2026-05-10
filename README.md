@@ -16,22 +16,56 @@
 
 ## 快速开始
 
+通过 npm 全局安装：
+
 ```bash
-git clone https://github.com/linyan185/deepseekcode.git
-cd deepseekcode
-npm ci --ignore-scripts
-npm run check
+npm install -g @qingj/deepseekcode
+```
 
+设置 DeepSeek API key：
+
+```bash
 export DEEPSEEK_API_KEY="sk-..."
+```
 
+Windows CMD：
+
+```cmd
+setx DEEPSEEK_API_KEY "sk-..."
+```
+
+重新打开终端后，在任意项目目录运行：
+
+```bash
 cd /path/to/your/project
-/path/to/deepseekcode/run-deepseek.cmd
+deepseekcode
+```
+
+也可以使用等价命令：
+
+```bash
+deepseek-code
 ```
 
 一次性命令模式：
 
 ```bash
 deepseek-code -p "总结这个仓库"
+```
+
+## 源码构建
+
+```bash
+git clone https://github.com/QingJ01/DeepSeekCode.git
+cd DeepSeekCode
+npm ci --ignore-scripts
+npm run check
+```
+
+本地源码运行：
+
+```bash
+node scripts/run-deepseek.mjs
 ```
 
 ## 模型别名
@@ -51,7 +85,7 @@ deepseek-code -p "总结这个仓库"
 | [配置参考](docs/configuration.md) | 环境变量、模型别名、settings.json |
 | [使用指南](docs/usage.md) | 交互模式、CLI 参数、斜杠命令、工具 |
 | [推理模式](docs/thinking-and-effort.md) | Thinking 模式、Effort 等级、输出限制 |
-| [MCP 与高级功能](docs/mcp-and-advanced.md) | MCP 服务器、子代理、Hooks、Worktree、CI/CD |
+| [MCP 与高级功能](docs/mcp-and-advanced.md) | MCP 服务、子代理、Hooks、Worktree、CI/CD |
 | [常见问题](docs/faq.md) | 故障排除、兼容性、常见问题 |
 
 ## 工作原理
@@ -59,7 +93,7 @@ deepseek-code -p "总结这个仓库"
 - 通过 Anthropic SDK 将 API 调用路由到 DeepSeek 适配层
 - 默认开启 Thinking 推理模式，effort 等级为 `high`
 - Thinking 开启时仍支持自定义 temperature（0.0-2.0）
-- 自动前缀缓存（DeepSeek 服务端，无需 `cache_control`）
+- 自动前缀缓存由 DeepSeek 服务端处理，无需 `cache_control`
 - 将不支持的内容块（image、document、server-tool）转为文本占位
 - 子代理继承所有 DeepSeek 环境变量
 
@@ -71,6 +105,6 @@ npm run build
 
 生成目录（`dist/`、`build-src/`）已被 git 忽略。
 
-## 许可证
+## 许可
 
 [MIT](LICENSE)

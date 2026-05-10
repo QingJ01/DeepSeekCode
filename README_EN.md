@@ -4,7 +4,7 @@
 
 A local CLI coding agent adapted from the Claude Code codebase, routing model requests to DeepSeek's Anthropic-compatible API.
 
-> Community fork — not an official DeepSeek or Anthropic product.
+> Community fork, not an official DeepSeek or Anthropic product.
 
 ## Features
 
@@ -16,22 +16,56 @@ A local CLI coding agent adapted from the Claude Code codebase, routing model re
 
 ## Quick Start
 
+Install globally from npm:
+
 ```bash
-git clone https://github.com/linyan185/deepseekcode.git
-cd deepseekcode
-npm ci --ignore-scripts
-npm run check
+npm install -g @qingj/deepseekcode
+```
 
+Set your DeepSeek API key:
+
+```bash
 export DEEPSEEK_API_KEY="sk-..."
+```
 
+Windows CMD:
+
+```cmd
+setx DEEPSEEK_API_KEY "sk-..."
+```
+
+Open a new terminal, then run DeepSeekCode from any project directory:
+
+```bash
 cd /path/to/your/project
-/path/to/deepseekcode/run-deepseek.cmd
+deepseekcode
+```
+
+The equivalent command is also available:
+
+```bash
+deepseek-code
 ```
 
 One-shot mode:
 
 ```bash
 deepseek-code -p "summarize this repository"
+```
+
+## Build From Source
+
+```bash
+git clone https://github.com/QingJ01/DeepSeekCode.git
+cd DeepSeekCode
+npm ci --ignore-scripts
+npm run check
+```
+
+Run the local source checkout:
+
+```bash
+node scripts/run-deepseek.mjs
 ```
 
 ## Model Aliases
@@ -58,8 +92,8 @@ Legacy Claude aliases (`sonnet`, `opus`, `haiku`, `best`) are still supported.
 
 - Routes API calls through a DeepSeek adapter using the Anthropic SDK
 - Thinking mode enabled by default with `high` effort
-- Supports temperature 0.0–2.0 even with thinking enabled
-- Automatic prefix caching (DeepSeek server-side, no `cache_control` needed)
+- Supports temperature 0.0-2.0 even with thinking enabled
+- Automatic prefix caching is handled server-side by DeepSeek, no `cache_control` needed
 - Converts unsupported content blocks (image, document, server-tool) to text placeholders
 - Sub-agents inherit all DeepSeek environment variables
 

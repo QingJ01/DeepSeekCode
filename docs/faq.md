@@ -2,6 +2,16 @@
 
 ## 安装与运行
 
+### Q: 应该怎么安装发布版？
+
+```bash
+npm install -g @qingj/deepseekcode
+deepseekcode --version
+deepseekcode
+```
+
+也可以使用等价命令 `deepseek-code`。
+
 ### Q: `npm run check` 失败
 
 确保 Node.js 版本 >= 18：
@@ -33,7 +43,7 @@ npm run build
 
 ```bash
 cd /path/to/your/project     # 先进入目标项目
-/path/to/deepseekcode/run-deepseek.cmd   # 再运行启动器
+deepseek-code                # 再运行 DeepSeekCode
 ```
 
 ## 模型与推理
