@@ -11,6 +11,22 @@ const ciWorkflow = read('.github/workflows/ci.yml')
 const publishWorkflow = read('.github/workflows/publish.yml')
 const buildScript = read('scripts/build.mjs')
 
+assert.equal(
+  packageJson.name,
+  '@qingj/deepseekcode',
+  'package should publish under the scoped npm name allowed by npm',
+)
+assert.equal(
+  packageJson.bin?.deepseekcode,
+  'scripts/run-deepseek.mjs',
+  'scoped package should still expose deepseekcode as a CLI command',
+)
+assert.equal(
+  packageJson.bin?.['deepseek-code'],
+  'scripts/run-deepseek.mjs',
+  'scoped package should still expose deepseek-code as a CLI command',
+)
+
 assert.ok(
   existsSync(join(root, 'scripts/verify-release-tag.mjs')),
   'release tag verification script should exist',

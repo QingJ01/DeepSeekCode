@@ -73,7 +73,7 @@ deepseek-code
 移除链接：
 
 ```bash
-npm unlink -g deepseekcode
+npm uninstall -g @qingj/deepseekcode
 ```
 
 ## 下一步
