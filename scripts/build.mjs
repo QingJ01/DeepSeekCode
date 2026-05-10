@@ -291,10 +291,24 @@ for (let round = 1; round <= maxRounds; round++) {
     break
   }
 
-  const paths = new Set(missing.map(stubPathFor))
+  const stubTargets = new Map()
+  for (const item of missing) {
+    const path = stubPathFor(item)
+    const items = stubTargets.get(path) ?? []
+    items.push(item)
+    stubTargets.set(path, items)
+  }
+
   let created = 0
-  for (const path of paths) {
-    if (await createStub(path)) created++
+  const createdDetails = []
+  for (const [path, items] of stubTargets) {
+    if (await createStub(path)) {
+      created++
+      const sample = items[0]
+      createdDetails.push(
+        `${sample.mod}${sample.importer ? ` from ${sample.importer}` : ''} -> ${path}`,
+      )
+    }
   }
   let addedExports = 0
   for (const item of missingExports) {
@@ -303,6 +317,9 @@ for (let round = 1; round <= maxRounds; round++) {
   console.log(
     `  Found ${missing.length} missing modules, created ${created} stubs, added ${addedExports} exports`,
   )
+  for (const detail of createdDetails.slice(0, 5)) {
+    console.log(`    stubbed: ${detail}`)
+  }
   if (created === 0 && addedExports === 0) {
     console.log('  No new stubs or exports were created; stopping to avoid a retry loop.')
     break
