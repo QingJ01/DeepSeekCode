@@ -4,7 +4,7 @@ import {
   getAdditionalDirectoriesForClaudeMd,
   setCachedClaudeMdContent,
 } from './bootstrap/state.js'
-import { getLocalISODate } from './constants/common.js'
+import { getLocalISODate, getSessionStartDate } from './constants/common.js'
 import {
   filterInjectedMemoryFiles,
   getClaudeMds,
@@ -12,6 +12,7 @@ import {
 } from './utils/claudemd.js'
 import { logForDiagnosticsNoPII } from './utils/diagLogs.js'
 import { isBareMode, isEnvTruthy } from './utils/envUtils.js'
+import { getAPIProvider } from './utils/model/providers.js'
 import { execFileNoThrow } from './utils/execFileNoThrow.js'
 import { getBranch, getDefaultBranch, getIsGit, gitExe } from './utils/git.js'
 import { shouldIncludeGitInstructions } from './utils/gitSettings.js'
@@ -183,7 +184,7 @@ export const getUserContext = memoize(
 
     return {
       ...(claudeMd && { claudeMd }),
-      currentDate: `Today's date is ${getLocalISODate()}.`,
+      currentDate: `Today's date is ${getAPIProvider() === 'deepseek' ? getSessionStartDate() : getLocalISODate()}.`,
     }
   },
 )

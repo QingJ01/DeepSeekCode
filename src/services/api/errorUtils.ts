@@ -247,6 +247,11 @@ export function formatAPIError(error: APIError): string {
     return 'DeepSeek 账户余额不足，请在 platform.deepseek.com 充值后重试'
   }
 
+  if (error.status === 422 && getAPIProvider() === 'deepseek') {
+    const nested = extractNestedErrorMessage(error)
+    return `DeepSeek 请求参数无效（422）：${nested || error.message || '请检查工具定义和消息格式'}`
+  }
+
   // Guard: when deserialized from JSONL (e.g. --resume), the error object may
   // be a plain object without a `.message` property.  Return a safe fallback
   // instead of undefined, which would crash callers that access `.length`.

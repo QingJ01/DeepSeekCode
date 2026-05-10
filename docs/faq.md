@@ -110,6 +110,21 @@ DeepSeek V4 在非 thinking 模式下支持 0.0-2.0 范围的 temperature。**Th
 
 登录 [platform.deepseek.com](https://platform.deepseek.com) 充值后重试。DeepSeek 使用 HTTP 402 状态码表示余额不足，DeepSeekCode 不会自动重试此错误。
 
+### Q: 提示 "请求超时" / 排队超时
+
+DeepSeek 在高负载时会将请求放入队列排队等待，超过 10 分钟未开始推理的请求会被服务端断开。解决方案：
+- 等待几分钟后重试
+- 降低 effort 等级（`/effort low`）减少排队时间
+- 切换到 Flash 模型（负载更低）
+
+### Q: 提示 "请求参数无效（422）"
+
+通常是工具定义或消息格式不符合 DeepSeek API 要求。检查自定义 MCP 工具的 schema 是否有不兼容的字段。
+
+### Q: 使用了不认识的模型名
+
+DeepSeek API 对未知模型名会**静默降级为 `deepseek-v4-flash`**（不报错）。DeepSeekCode 会在切换模型时警告你，但如果通过环境变量设置了错误的模型名可能不会提示。确认 `DEEPSEEK_MODEL` 值为 `deepseek-v4-pro` 或 `deepseek-v4-flash`。
+
 ### Q: 缓存命中率很低
 
 - 确保对话中没有频繁切换模型（会导致缓存失效）

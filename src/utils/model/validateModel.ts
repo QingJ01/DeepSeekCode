@@ -11,6 +11,11 @@ import {
 } from '@anthropic-ai/sdk'
 import { getModelStrings } from './modelStrings.js'
 
+const KNOWN_DEEPSEEK_MODELS = new Set([
+  'deepseek-v4-pro',
+  'deepseek-v4-flash',
+])
+
 // Cache valid models to avoid repeated API calls
 const validModelCache = new Map<string, boolean>()
 
@@ -19,7 +24,7 @@ const validModelCache = new Map<string, boolean>()
  */
 export async function validateModel(
   model: string,
-): Promise<{ valid: boolean; error?: string }> {
+): Promise<{ valid: boolean; error?: string; warning?: string }> {
   const normalizedModel = model.trim()
 
   // Empty model is invalid
@@ -39,6 +44,14 @@ export async function validateModel(
   const lowerModel = normalizedModel.toLowerCase()
   if ((MODEL_ALIASES as readonly string[]).includes(lowerModel)) {
     return { valid: true }
+  }
+
+  // DeepSeek: unrecognized model names are silently remapped to deepseek-v4-flash
+  if (getAPIProvider() === 'deepseek' && !KNOWN_DEEPSEEK_MODELS.has(lowerModel)) {
+    return {
+      valid: true,
+      warning: `模型 '${normalizedModel}' 不是已知的 DeepSeek 模型，服务端会将其映射为 deepseek-v4-flash。已知模型：deepseek-v4-pro, deepseek-v4-flash`,
+    }
   }
 
   // Check if it matches ANTHROPIC_CUSTOM_MODEL_OPTION (pre-validated by the user)

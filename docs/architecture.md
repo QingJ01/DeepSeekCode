@@ -89,6 +89,7 @@ npm run test:release   # 运行所有发布测试
 **`src/services/api/claude.ts`**
 
 - **内容清洗**：`sanitizeMessagesForDeepSeek()` 将不支持的内容块（image、document、redacted_thinking）替换为文本占位
+- **is_error 补偿**：DeepSeek 忽略 `tool_result.is_error` 字段，代码为错误结果自动添加 `[ERROR]` 前缀
 - **缓存**：关闭 `cache_control`（DeepSeek 服务端自动前缀缓存）
 - **用量映射**：`prompt_cache_hit_tokens` / `prompt_cache_miss_tokens` → `cache_read_input_tokens` / `cache_creation_input_tokens`
 - **Temperature**：DeepSeek thinking 模式下 temperature 被服务端忽略，代码不发送该参数；非 thinking 模式支持 0.0-2.0
@@ -119,8 +120,9 @@ npm run test:release   # 运行所有发布测试
 | `src/utils/modelCost.ts` | 人民币定价常量，折扣/原价切换 |
 | `src/cost-tracker.ts` | 人民币格式化，缓存命中率统计 |
 | `src/services/api/withRetry.ts` | 402 不重试，429 纯指数退避，跳过 529 回退 |
-| `src/services/api/errors.ts` | 402 余额不足分类，429 中文提示 |
+| `src/services/api/errors.ts` | 402 余额不足、422 参数无效、429 中文提示、超时排队提示 |
 | `src/services/tokenEstimation.ts` | UTF-8 字节估算，跳过 API 计数 |
+| `src/utils/model/validateModel.ts` | 未知模型名警告（DeepSeek 会静默降级为 flash） |
 
 ### 配置隔离
 

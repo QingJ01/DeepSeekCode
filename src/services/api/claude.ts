@@ -989,17 +989,38 @@ function sanitizeDeepSeekContentBlocks(
 ): BetaContentBlockParam[] {
   let changed = false
   const sanitized = blocks.map(block => {
-    if (isToolResult(block) && Array.isArray(block.content)) {
-      const nested = sanitizeDeepSeekContentBlocks(
-        block.content as BetaContentBlockParam[],
-      )
-      if (nested !== block.content) {
-        changed = true
-        return {
-          ...block,
-          content: nested,
-        } as BetaContentBlockParam
+    if (isToolResult(block)) {
+      let toolChanged = false
+      let updatedBlock = block
+
+      // DeepSeek ignores is_error flag — prefix error content so model can detect failures
+      if ((block as { is_error?: boolean }).is_error) {
+        toolChanged = true
+        const content = Array.isArray(block.content)
+          ? block.content
+          : [{ type: 'text', text: String(block.content ?? '') }]
+        const prefixed = [
+          { type: 'text', text: '[ERROR] Tool execution failed:' },
+          ...content,
+        ] as BetaContentBlockParam[]
+        updatedBlock = { ...block, content: prefixed } as typeof block
       }
+
+      if (Array.isArray(updatedBlock.content)) {
+        const nested = sanitizeDeepSeekContentBlocks(
+          updatedBlock.content as BetaContentBlockParam[],
+        )
+        if (nested !== updatedBlock.content) {
+          toolChanged = true
+          updatedBlock = { ...updatedBlock, content: nested } as typeof block
+        }
+      }
+
+      if (toolChanged) {
+        changed = true
+        return updatedBlock as BetaContentBlockParam
+      }
+      return block
     }
 
     if (isDeepSeekUnsupportedContentBlock(block)) {

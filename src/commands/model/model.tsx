@@ -180,10 +180,14 @@ function SetModelAndClose({
         // and model names are case-sensitive
         const {
           valid,
-          error: error_0
+          error: error_0,
+          warning
         } = await validateModel(model);
         if (valid) {
           setModel(model);
+          if (warning) {
+            onDone(warning, { display: 'system' });
+          }
         } else {
           onDone(error_0 || `Model '${model}' not found`, {
             display: 'system'
