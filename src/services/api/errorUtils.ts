@@ -1,4 +1,5 @@
 import type { APIError } from '@anthropic-ai/sdk'
+import { getAPIProvider } from '../../utils/model/providers.js'
 
 // SSL/TLS error codes from OpenSSL (used by both Node.js and Bun)
 // See: https://www.openssl.org/docs/man3.1/man3/X509_STORE_CTX_get_error.html
@@ -240,6 +241,10 @@ export function formatAPIError(error: APIError): string {
       return `Unable to connect to API (${connectionDetails.code})`
     }
     return 'Unable to connect to API. Check your internet connection'
+  }
+
+  if (error.status === 402) {
+    return 'DeepSeek 账户余额不足，请在 platform.deepseek.com 充值后重试'
   }
 
   // Guard: when deserialized from JSONL (e.g. --resume), the error object may

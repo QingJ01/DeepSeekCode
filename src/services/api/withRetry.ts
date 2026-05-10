@@ -11,7 +11,10 @@ import { isAwsCredentialsProviderError } from 'src/utils/aws.js'
 import { logForDebugging } from 'src/utils/debug.js'
 import { logError } from 'src/utils/log.js'
 import { createSystemAPIErrorMessage } from 'src/utils/messages.js'
-import { getAPIProviderForStatsig } from 'src/utils/model/providers.js'
+import {
+  getAPIProvider,
+  getAPIProviderForStatsig,
+} from 'src/utils/model/providers.js'
 import {
   clearApiKeyHelperCache,
   clearAwsCredentialsCache,
@@ -326,6 +329,7 @@ export async function* withRetry<T>(
       // Track consecutive 529 errors
       if (
         is529Error(error) &&
+        getAPIProvider() !== 'deepseek' &&
         // If FALLBACK_FOR_ALL_PRIMARY_MODELS is not set, fall through only if the primary model is a non-custom Opus model.
         // TODO: Revisit if the isNonCustomOpusModel check should still exist, or if isNonCustomOpusModel is a stale artifact of when Claude Code was hardcoded on Opus.
         (process.env.FALLBACK_FOR_ALL_PRIMARY_MODELS ||
@@ -694,6 +698,11 @@ function handleGcpCredentialError(error: unknown): boolean {
 }
 
 function shouldRetry(error: APIError): boolean {
+  // 402 Insufficient Balance (DeepSeek) — never retry
+  if (error.status === 402) {
+    return false
+  }
+
   // Never retry mock errors - they're from /mock-limits command for testing
   if (isMockRateLimitError(error)) {
     return false
@@ -765,6 +774,9 @@ function shouldRetry(error: APIError): boolean {
   // Retry on rate limits, but not for ClaudeAI Subscription users
   // Enterprise users can retry because they typically use PAYG instead of rate limits
   if (error.status === 429) {
+    if (getAPIProvider() === 'deepseek') {
+      return true // DeepSeek: always retry 429 with exponential backoff
+    }
     return !isClaudeAISubscriber() || isEnterpriseSubscriber()
   }
 

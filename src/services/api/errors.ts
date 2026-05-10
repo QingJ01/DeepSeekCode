@@ -462,6 +462,15 @@ export function getAssistantMessageFromError(
     })
   }
 
+  if (error instanceof APIError && error.status === 429) {
+    if (getAPIProvider() === 'deepseek') {
+      return createAssistantAPIErrorMessage({
+        content: '请求频率超限，请稍后重试',
+        error: 'rate_limit',
+      })
+    }
+  }
+
   if (
     error instanceof APIError &&
     error.status === 429 &&
@@ -993,6 +1002,10 @@ export function classifyAPIError(error: unknown): string {
     return 'capacity_off_switch'
   }
 
+  if (error instanceof APIError && error.status === 402) {
+    return 'insufficient_balance'
+  }
+
   // Rate limiting
   if (error instanceof APIError && error.status === 429) {
     return 'rate_limit'
@@ -1204,4 +1217,16 @@ export function getErrorMessageIfRefusal(
     content: baseMessage + modelSuggestion,
     error: 'invalid_request',
   })
+}
+
+/**
+ * Extract DeepSeek's trace ID from error response headers for debugging.
+ */
+export function extractDeepSeekTraceId(error: APIError): string | undefined {
+  const headers = error.headers
+  if (!headers) return undefined
+  if (typeof headers.get === 'function') {
+    return headers.get('x-ds-trace-id') ?? undefined
+  }
+  return (headers as Record<string, string>)['x-ds-trace-id']
 }
