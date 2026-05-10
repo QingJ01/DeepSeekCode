@@ -6,6 +6,8 @@
 
 > 社区独立 fork，非 DeepSeek 或 Anthropic 官方产品。
 
+![DeepSeekCode](DeepSeekCode.png)
+
 ## 功能特性
 
 - 项目感知对话，支持工具执行和权限确认
@@ -123,3 +125,7 @@ npm test               # 运行测试套件
 ## 许可
 
 [MIT](LICENSE)
+
+## 友情链接
+
+- [LINUX DO](https://linux.do)

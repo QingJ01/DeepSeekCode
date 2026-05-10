@@ -6,6 +6,8 @@ A local CLI coding agent adapted from the Claude Code codebase, routing model re
 
 > Community fork, not an official DeepSeek or Anthropic product.
 
+![DeepSeekCode](DeepSeekCode.png)
+
 ## Features
 
 - Project-aware chat with tool execution and permission prompts
@@ -123,3 +125,7 @@ See [Architecture & Dev Guide](docs/architecture.md) for details.
 ## License
 
 [MIT](LICENSE)
+
+## Links
+
+- [LINUX DO](https://linux.do)
