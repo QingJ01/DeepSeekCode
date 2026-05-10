@@ -30,6 +30,7 @@ import {
   getOriginalCwd,
 } from '../../bootstrap/state.js'
 import { logForDebugging } from '../debug.js'
+import { getProjectConfigDirName } from '../envUtils.js'
 import { expandPath } from '../path.js'
 import { getPlatform, type Platform } from '../platform.js'
 import { settingsChangeDetector } from '../settings/changeDetector.js'
@@ -239,9 +240,14 @@ export function convertToSandboxRuntimeConfig(
   // This handles the case where the user has cd'd to a different directory
   const cwd = getCwdState()
   const originalCwd = getOriginalCwd()
+  const protectedProjectConfigDirNames = Array.from(
+    new Set([getProjectConfigDirName(), '.claude']),
+  )
   if (cwd !== originalCwd) {
-    denyWrite.push(resolve(cwd, '.claude', 'settings.json'))
-    denyWrite.push(resolve(cwd, '.claude', 'settings.local.json'))
+    for (const dirName of protectedProjectConfigDirNames) {
+      denyWrite.push(resolve(cwd, dirName, 'settings.json'))
+      denyWrite.push(resolve(cwd, dirName, 'settings.local.json'))
+    }
   }
 
   // Block writes to .claude/skills in both original and current working directories.
@@ -249,9 +255,13 @@ export function convertToSandboxRuntimeConfig(
   // .claude/agents but not .claude/skills. Skills have the same privilege level
   // (auto-discovered, auto-loaded, full Claude capabilities) so they need the
   // same OS-level sandbox protection.
-  denyWrite.push(resolve(originalCwd, '.claude', 'skills'))
+  for (const dirName of protectedProjectConfigDirNames) {
+    denyWrite.push(resolve(originalCwd, dirName, 'skills'))
+  }
   if (cwd !== originalCwd) {
-    denyWrite.push(resolve(cwd, '.claude', 'skills'))
+    for (const dirName of protectedProjectConfigDirNames) {
+      denyWrite.push(resolve(cwd, dirName, 'skills'))
+    }
   }
 
   // SECURITY: Git's is_git_directory() treats cwd as a bare repo if it has

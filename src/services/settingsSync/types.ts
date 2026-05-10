@@ -6,6 +6,10 @@
  */
 
 import { z } from 'zod/v4'
+import {
+  getProjectConfigDirName,
+  shouldUseDeepSeekConfigDir,
+} from '../../utils/envUtils.js'
 import { lazySchema } from '../../utils/lazySchema.js'
 
 /**
@@ -55,13 +59,17 @@ export type SettingsSyncUploadResult = {
   error?: string
 }
 
+const userConfigSyncPrefix = shouldUseDeepSeekConfigDir()
+  ? '~/.deepseek-code'
+  : '~/.claude'
+
 /**
  * Keys used for sync entries
  */
 export const SYNC_KEYS = {
-  USER_SETTINGS: '~/.claude/settings.json',
-  USER_MEMORY: '~/.claude/CLAUDE.md',
+  USER_SETTINGS: `${userConfigSyncPrefix}/settings.json`,
+  USER_MEMORY: `${userConfigSyncPrefix}/CLAUDE.md`,
   projectSettings: (projectId: string) =>
-    `projects/${projectId}/.claude/settings.local.json`,
+    `projects/${projectId}/${getProjectConfigDirName()}/settings.local.json`,
   projectMemory: (projectId: string) => `projects/${projectId}/CLAUDE.local.md`,
 } as const

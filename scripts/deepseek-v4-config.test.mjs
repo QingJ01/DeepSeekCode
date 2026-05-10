@@ -9,7 +9,7 @@ const runMjs = read('scripts/run-deepseek.mjs')
 const runPs1 = read('run-deepseek.ps1')
 const envExample = read('.env.example')
 const readme = read('README.md')
-const readmeCn = read('README_CN.md')
+const readmeEn = read('README_EN.md')
 const effort = read('src/utils/effort.ts')
 const claudeApi = read('src/services/api/claude.ts')
 
@@ -43,7 +43,7 @@ assert.match(
 for (const [name, source] of [
   ['.env.example', envExample],
   ['README.md', readme],
-  ['README_CN.md', readmeCn],
+  ['README_EN.md', readmeEn],
 ]) {
   assert.doesNotMatch(source, /deepseek-v4-pro\[1m\]/, `${name} should not mention the [1m] model alias`)
 }

@@ -17,7 +17,10 @@ import { checkStatsigFeatureGate_CACHED_MAY_BE_STALE } from '../../services/anal
 import type { AnyObject, Tool, ToolPermissionContext } from '../../Tool.js'
 import { FILE_READ_TOOL_NAME } from '../../tools/FileReadTool/prompt.js'
 import { getCwd } from '../cwd.js'
-import { getClaudeConfigHomeDir } from '../envUtils.js'
+import {
+  getClaudeConfigHomeDir,
+  getProjectConfigDirName,
+} from '../envUtils.js'
 import {
   getFsImplementation,
   getPathsForPermissionCheck,
@@ -76,6 +79,7 @@ export const DANGEROUS_DIRECTORIES = [
   '.vscode',
   '.idea',
   '.claude',
+  '.deepseek',
 ] as const
 
 /**
@@ -106,12 +110,14 @@ export function getClaudeSkillScope(
 
   const bases = [
     {
-      dir: expandPath(join(getOriginalCwd(), '.claude', 'skills')),
-      prefix: '/.claude/skills/',
+      dir: expandPath(
+        join(getOriginalCwd(), getProjectConfigDirName(), 'skills'),
+      ),
+      prefix: `/${getProjectConfigDirName()}/skills/`,
     },
     {
-      dir: expandPath(join(homedir(), '.claude', 'skills')),
-      prefix: '~/.claude/skills/',
+      dir: expandPath(join(getClaudeConfigHomeDir(), 'skills')),
+      prefix: GLOBAL_CLAUDE_FOLDER_PERMISSION_PATTERN.slice(0, -2) + 'skills/',
     },
   ]
 
@@ -208,6 +214,12 @@ export function isClaudeSettingsPath(filePath: string): boolean {
 
   // Use platform separator so endsWith checks work on both Unix (/) and Windows (\)
   if (
+    normalizedPath.endsWith(
+      `${sep}${getProjectConfigDirName()}${sep}settings.json`,
+    ) ||
+    normalizedPath.endsWith(
+      `${sep}${getProjectConfigDirName()}${sep}settings.local.json`,
+    ) ||
     normalizedPath.endsWith(`${sep}.claude${sep}settings.json`) ||
     normalizedPath.endsWith(`${sep}.claude${sep}settings.local.json`)
   ) {
@@ -230,9 +242,21 @@ function isClaudeConfigFilePath(filePath: string): boolean {
   // Check if file is within .claude/commands or .claude/agents directories
   // using proper path segment validation (not string matching with includes())
   // pathInWorkingPath now handles case-insensitive comparison to prevent bypasses
-  const commandsDir = join(getOriginalCwd(), '.claude', 'commands')
-  const agentsDir = join(getOriginalCwd(), '.claude', 'agents')
-  const skillsDir = join(getOriginalCwd(), '.claude', 'skills')
+  const commandsDir = join(
+    getOriginalCwd(),
+    getProjectConfigDirName(),
+    'commands',
+  )
+  const agentsDir = join(
+    getOriginalCwd(),
+    getProjectConfigDirName(),
+    'agents',
+  )
+  const skillsDir = join(
+    getOriginalCwd(),
+    getProjectConfigDirName(),
+    'skills',
+  )
 
   return (
     pathInWorkingPath(filePath, commandsDir) ||
@@ -453,11 +477,9 @@ function isDangerousFilePathToAutoEdit(path: string): boolean {
         continue
       }
 
-      // Special case: .claude/worktrees/ is a structural path (where Claude stores
-      // git worktrees), not a user-created dangerous directory. Skip the .claude
-      // segment when it's followed by 'worktrees'. Any nested .claude directories
-      // within the worktree (not followed by 'worktrees') are still blocked.
-      if (dir === '.claude') {
+      // Special case: project-config/worktrees/ is a structural path (where the
+      // CLI stores git worktrees), not a user-created dangerous directory.
+      if (dir === '.claude' || dir === '.deepseek') {
         const nextSegment = pathSegments[i + 1]
         if (
           nextSegment &&
@@ -1589,7 +1611,9 @@ export function checkEditableInternalPath(
   // .claude/ only (not ~/.claude/) since launch.json is per-project.
   if (
     normalizeCaseForComparison(normalizedPath) ===
-    normalizeCaseForComparison(join(getOriginalCwd(), '.claude', 'launch.json'))
+    normalizeCaseForComparison(
+      join(getOriginalCwd(), getProjectConfigDirName(), 'launch.json'),
+    )
   ) {
     return {
       behavior: 'allow',

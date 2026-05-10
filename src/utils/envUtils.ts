@@ -28,7 +28,18 @@ export function shouldUseDeepSeekConfigDir(): boolean {
 }
 
 function getDefaultConfigHomeDir(): string {
-  return join(homedir(), shouldUseDeepSeekConfigDir() ? '.deepseek-code' : '.claude')
+  return join(
+    homedir(),
+    shouldUseDeepSeekConfigDir() ? '.deepseek-code' : '.claude',
+  )
+}
+
+export function getProjectConfigDirName(): '.deepseek' | '.claude' {
+  return shouldUseDeepSeekConfigDir() ? '.deepseek' : '.claude'
+}
+
+export function getProjectConfigDir(root: string): string {
+  return join(root, getProjectConfigDirName())
 }
 
 // Memoized: 150+ callers, many on hot paths. Keyed off config/provider env so

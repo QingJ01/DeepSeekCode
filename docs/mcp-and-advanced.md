@@ -170,7 +170,7 @@ deepseek-code kill <id>   # 终止会话
 
 ### 自定义技能
 
-在 `~/.deepseek-code/skills/` 或项目 `.claude/skills/` 目录下创建 `.md` 文件：
+在 `~/.deepseek-code/skills/` 或项目 `.deepseek/skills/` 目录下创建 `.md` 文件：
 
 ```markdown
 ---

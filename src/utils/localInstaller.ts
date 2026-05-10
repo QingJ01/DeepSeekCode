@@ -28,7 +28,11 @@ export function getLocalClaudePath(): string {
  */
 export function isRunningFromLocalInstallation(): boolean {
   const execPath = process.argv[1] || ''
-  return execPath.includes('/.claude/local/node_modules/')
+  const normalizedExecPath = execPath.replace(/\\/g, '/')
+  const normalizedLocalInstallDir = getLocalInstallDir().replace(/\\/g, '/')
+  return normalizedExecPath.includes(
+    `${normalizedLocalInstallDir}/node_modules/`,
+  )
 }
 
 /**
@@ -64,7 +68,7 @@ export async function ensureLocalPackageEnvironment(): Promise<boolean> {
     await writeIfMissing(
       join(localInstallDir, 'package.json'),
       jsonStringify(
-        { name: 'claude-local', version: '0.0.1', private: true },
+        { name: 'claude-local', version: '0.1.0', private: true },
         null,
         2,
       ),

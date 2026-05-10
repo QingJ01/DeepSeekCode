@@ -75,8 +75,8 @@ DeepSeekCode 使用分层配置系统：
 | 路径 | 作用 | 优先级 |
 |------|------|--------|
 | `~/.deepseek-code/settings.json` | 全局用户设置 | 最低 |
-| `<项目>/.claude/settings.json` | 项目设置 | 中 |
-| `<项目>/.claude/settings.local.json` | 本地覆盖（不进 git） | 最高 |
+| `<项目>/.deepseek/settings.json` | 项目设置 | 中 |
+| `<项目>/.deepseek/settings.local.json` | 本地覆盖（不进 git） | 最高 |
 
 ### 常用设置项
 
@@ -128,7 +128,7 @@ DeepSeekCode 使用分层配置系统：
 - 提交信息用中文
 ```
 
-支持多层级 `CLAUDE.md`：项目根目录、子目录、`~/.claude/CLAUDE.md`（全局）。
+支持多层级 `CLAUDE.md`：项目根目录、子目录、`~/.deepseek-code/CLAUDE.md`（全局）。
 
 ## .env 文件
 

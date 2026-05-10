@@ -5,6 +5,7 @@ import type { AppState } from '../../state/AppState.js'
 import type { EditableSettingSource } from '../settings/constants.js'
 import { SOURCES } from '../settings/constants.js'
 import {
+  getRelativeSettingsFilePathForSource,
   getSettingsFilePathForSource,
   getSettingsForSource,
 } from '../settings/settings.js'
@@ -170,11 +171,13 @@ export function getHooksForEvent(
 export function hookSourceDescriptionDisplayString(source: HookSource): string {
   switch (source) {
     case 'userSettings':
-      return 'User settings (~/.claude/settings.json)'
+      return `User settings (${
+        getSettingsFilePathForSource('userSettings') ?? 'settings.json'
+      })`
     case 'projectSettings':
-      return 'Project settings (.claude/settings.json)'
+      return `Project settings (${getRelativeSettingsFilePathForSource('projectSettings')})`
     case 'localSettings':
-      return 'Local settings (.claude/settings.local.json)'
+      return `Local settings (${getRelativeSettingsFilePathForSource('localSettings')})`
     case 'pluginHook':
       // TODO: Get the actual plugin hook file paths instead of using glob pattern
       // We should capture the specific plugin paths during hook registration and display them here

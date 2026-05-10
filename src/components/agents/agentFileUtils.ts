@@ -10,7 +10,10 @@ import {
 } from '../../tools/AgentTool/loadAgentsDir.js'
 import { getCwd } from '../../utils/cwd.js'
 import type { EffortValue } from '../../utils/effort.js'
-import { getClaudeConfigHomeDir } from '../../utils/envUtils.js'
+import {
+  getClaudeConfigHomeDir,
+  getProjectConfigDirName,
+} from '../../utils/envUtils.js'
 import { getErrnoCode } from '../../utils/errors.js'
 import { AGENT_PATHS } from './types.js'
 
@@ -64,7 +67,7 @@ function getAgentDirectoryPath(location: SettingSource): string {
     case 'userSettings':
       return join(getClaudeConfigHomeDir(), AGENT_PATHS.AGENTS_DIR)
     case 'projectSettings':
-      return join(getCwd(), AGENT_PATHS.FOLDER_NAME, AGENT_PATHS.AGENTS_DIR)
+      return join(getCwd(), getProjectConfigDirName(), AGENT_PATHS.AGENTS_DIR)
     case 'policySettings':
       return join(
         getManagedFilePath(),
@@ -72,14 +75,14 @@ function getAgentDirectoryPath(location: SettingSource): string {
         AGENT_PATHS.AGENTS_DIR,
       )
     case 'localSettings':
-      return join(getCwd(), AGENT_PATHS.FOLDER_NAME, AGENT_PATHS.AGENTS_DIR)
+      return join(getCwd(), getProjectConfigDirName(), AGENT_PATHS.AGENTS_DIR)
   }
 }
 
 function getRelativeAgentDirectoryPath(location: SettingSource): string {
   switch (location) {
     case 'projectSettings':
-      return join('.', AGENT_PATHS.FOLDER_NAME, AGENT_PATHS.AGENTS_DIR)
+      return join('.', getProjectConfigDirName(), AGENT_PATHS.AGENTS_DIR)
     default:
       return getAgentDirectoryPath(location)
   }

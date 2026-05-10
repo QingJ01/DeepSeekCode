@@ -12,6 +12,7 @@ import type { Message } from '../../types/message.js'
 import { createAbortController } from '../abortController.js'
 import { count } from '../array.js'
 import { getCwd } from '../cwd.js'
+import { getProjectConfigDirName } from '../envUtils.js'
 import { toError } from '../errors.js'
 import { logError } from '../log.js'
 import {
@@ -194,8 +195,14 @@ export async function applySkillImprovement(
   const { join } = await import('path')
   const fs = await import('fs/promises')
 
-  // Skills live at .claude/skills/<name>/SKILL.md relative to CWD
-  const filePath = join(getCwd(), '.claude', 'skills', skillName, 'SKILL.md')
+  // Skills live at the project config skills directory relative to CWD.
+  const filePath = join(
+    getCwd(),
+    getProjectConfigDirName(),
+    'skills',
+    skillName,
+    'SKILL.md',
+  )
 
   let currentContent: string
   try {

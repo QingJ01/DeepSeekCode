@@ -1,4 +1,4 @@
-// Scheduler lease lock for .claude/scheduled_tasks.json.
+// Scheduler lease lock for project scheduled_tasks.json.
 //
 // When multiple Claude sessions run in the same project directory, only one
 // should drive the cron scheduler. The first session to acquire this lock
@@ -14,13 +14,16 @@ import { z } from 'zod/v4'
 import { getProjectRoot, getSessionId } from '../bootstrap/state.js'
 import { registerCleanup } from './cleanupRegistry.js'
 import { logForDebugging } from './debug.js'
+import { getProjectConfigDirName } from './envUtils.js'
 import { getErrnoCode } from './errors.js'
 import { isProcessRunning } from './genericProcessUtils.js'
 import { safeParseJSON } from './json.js'
 import { lazySchema } from './lazySchema.js'
 import { jsonStringify } from './slowOperations.js'
 
-const LOCK_FILE_REL = join('.claude', 'scheduled_tasks.lock')
+function getLockFileRel(): string {
+  return join(getProjectConfigDirName(), 'scheduled_tasks.lock')
+}
 
 const schedulerLockSchema = lazySchema(() =>
   z.object({
@@ -47,7 +50,7 @@ let unregisterCleanup: (() => void) | undefined
 let lastBlockedBy: string | undefined
 
 function getLockPath(dir?: string): string {
-  return join(dir ?? getProjectRoot(), LOCK_FILE_REL)
+  return join(dir ?? getProjectRoot(), getLockFileRel())
 }
 
 async function readLock(dir?: string): Promise<SchedulerLock | undefined> {
