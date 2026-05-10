@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { formatTotalCost, saveCurrentSessionCosts } from './cost-tracker.js'
 import { hasConsoleBillingAccess } from './utils/billing.js'
+import { getAPIProvider } from './utils/model/providers.js'
 import type { FpsMetrics } from './utils/fpsTracker.js'
 
 export function useCostSummary(
@@ -8,7 +9,7 @@ export function useCostSummary(
 ): void {
   useEffect(() => {
     const f = () => {
-      if (hasConsoleBillingAccess()) {
+      if (getAPIProvider() === 'deepseek' || hasConsoleBillingAccess()) {
         process.stdout.write('\n' + formatTotalCost() + '\n')
       }
 

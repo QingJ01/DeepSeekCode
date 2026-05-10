@@ -38,7 +38,7 @@ export function CostThresholdDialog(t0) {
   }
   let t4;
   if ($[4] !== onDone || $[5] !== t3) {
-    t4 = <Dialog title="You've spent $5 on the Anthropic API this session." onCancel={onDone}>{t1}{t3}</Dialog>;
+    t4 = <Dialog title="You've spent a significant amount on API calls this session." onCancel={onDone}>{t1}{t3}</Dialog>;
     $[4] = onDone;
     $[5] = t3;
     $[6] = t4;

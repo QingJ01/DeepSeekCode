@@ -93,6 +93,7 @@ import { useTeammateViewAutoExit } from '../hooks/useTeammateViewAutoExit.js';
 import { errorMessage } from '../utils/errors.js';
 import { isHumanTurn } from '../utils/messagePredicates.js';
 import { logError } from '../utils/log.js';
+import { getAPIProvider } from '../utils/model/providers.js';
 // Dead code elimination: conditional imports
 /* eslint-disable custom-rules/no-process-env-top-level, @typescript-eslint/no-require-imports */
 const useVoiceIntegration: typeof import('../hooks/useVoiceIntegration.js').useVoiceIntegration = feature('VOICE_MODE') ? require('../hooks/useVoiceIntegration.js').useVoiceIntegration : () => ({
@@ -2202,7 +2203,8 @@ export function REPL({
   };
   useEffect(() => {
     const totalCost = getTotalCost();
-    if (totalCost >= 5 /* $5 */ && !showCostDialog && !haveShownCostDialog) {
+    const costThreshold = getAPIProvider() === 'deepseek' ? 35 : 5
+    if (totalCost >= costThreshold && !showCostDialog && !haveShownCostDialog) {
       logEvent('tengu_cost_threshold_reached', {});
       // Mark as shown even if the dialog won't render (no console billing
       // access). Otherwise this effect re-fires on every message change for
