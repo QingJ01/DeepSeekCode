@@ -6,9 +6,9 @@ import { join } from 'node:path'
 const root = process.cwd()
 const packageJson = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
 const rawTag =
+  process.argv[2] ||
   process.env.RELEASE_TAG ||
   process.env.GITHUB_REF_NAME ||
-  process.argv[2] ||
   ''
 
 const tag = rawTag.replace(/^refs\/tags\//, '')
