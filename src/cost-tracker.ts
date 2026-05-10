@@ -45,7 +45,7 @@ import { isFastModeEnabled } from './utils/fastMode.js'
 import { formatDuration, formatNumber } from './utils/format.js'
 import type { FpsMetrics } from './utils/fpsTracker.js'
 import { getCanonicalName } from './utils/model/model.js'
-import { calculateUSDCost } from './utils/modelCost.js'
+import { calculateUSDCost, isDeepSeekCurrency } from './utils/modelCost.js'
 export {
   getTotalCostUSD as getTotalCost,
   getTotalDuration,
@@ -175,7 +175,8 @@ export function saveCurrentSessionCosts(fpsMetrics?: FpsMetrics): void {
 }
 
 function formatCost(cost: number, maxDecimalPlaces: number = 4): string {
-  return `$${cost > 0.5 ? round(cost, 100).toFixed(2) : cost.toFixed(maxDecimalPlaces)}`
+  const symbol = isDeepSeekCurrency() ? '¥' : '$'
+  return `${symbol}${cost > 0.5 ? round(cost, 100).toFixed(2) : cost.toFixed(maxDecimalPlaces)}`
 }
 
 function formatModelUsage(): string {
