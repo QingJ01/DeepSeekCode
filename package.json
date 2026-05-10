@@ -1,6 +1,6 @@
 {
   "name": "@qingj/deepseekcode",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Local CLI coding agent powered by DeepSeek V4, adapted from Claude Code",
   "type": "module",
   "license": "MIT",
