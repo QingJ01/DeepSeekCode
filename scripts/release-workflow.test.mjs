@@ -9,6 +9,7 @@ const readJson = path => JSON.parse(read(path))
 const packageJson = readJson('package.json')
 const ciWorkflow = read('.github/workflows/ci.yml')
 const publishWorkflow = read('.github/workflows/publish.yml')
+const buildScript = read('scripts/build.mjs')
 
 assert.ok(
   existsSync(join(root, 'scripts/verify-release-tag.mjs')),
@@ -72,4 +73,14 @@ assert.doesNotMatch(
   packageJson.files.join('\n'),
   /^dist\/cli\.js\.map$/m,
   'published npm package should not include the large source map',
+)
+assert.match(
+  buildScript,
+  /import \{[^}]*\bisAbsolute\b[^}]*\} from 'node:path'/,
+  'build should import isAbsolute for CI/Linux esbuild paths',
+)
+assert.match(
+  buildScript,
+  /if \(isAbsolute\(normalized\)\) return normalized/,
+  'build should preserve absolute importer paths when creating stubs',
 )

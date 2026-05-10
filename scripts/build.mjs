@@ -2,7 +2,7 @@
 
 import { cp, mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
 import { execFileSync, execSync } from 'node:child_process'
-import { dirname, join } from 'node:path'
+import { dirname, isAbsolute, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -43,6 +43,7 @@ async function ensureEsbuild() {
 
 function importerToBuildPath(importer) {
   const normalized = importer.replace(/\\/g, '/')
+  if (isAbsolute(normalized)) return normalized
   if (normalized.startsWith('build-src/')) return join(ROOT, normalized)
   if (normalized.startsWith('src/')) return join(BUILD, normalized)
   return join(ROOT, normalized)
