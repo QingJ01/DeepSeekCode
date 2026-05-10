@@ -338,8 +338,18 @@ export function LogoV2() {
   const optimalLeftWidth = calculateOptimalLeftWidth(welcomeMessage_0, cwdLine, modelLine);
   const {
     leftWidth,
-    rightWidth
+    rightWidth,
+    totalWidth
   } = calculateLayoutDimensions(columns, layoutMode, optimalLeftWidth);
+  if (process.env.DEBUG_LOGO) {
+    const sw = stringWidth;
+    console.error(`[LogoV2 DEBUG] columns=${columns} totalWidth=${totalWidth} leftWidth=${leftWidth} rightWidth=${rightWidth}`);
+    console.error(`[LogoV2 DEBUG] modelLine="${modelLine}" width=${sw(modelLine)}`);
+    console.error(`[LogoV2 DEBUG] cwdLine="${cwdLine}" width=${sw(cwdLine)}`);
+    console.error(`[LogoV2 DEBUG] welcomeMessage="${welcomeMessage_0}" width=${sw(welcomeMessage_0)}`);
+    console.error(`[LogoV2 DEBUG] optimalLeftWidth=${optimalLeftWidth}`);
+    console.error(`[LogoV2 DEBUG] sum check: leftWidth(${leftWidth})+rightWidth(${rightWidth})+7=${leftWidth+rightWidth+7} vs totalWidth=${totalWidth}`);
+  }
   const T0 = OffscreenFreeze;
   const T1 = Box;
   const t11 = "column";
@@ -433,16 +443,7 @@ export function LogoV2() {
   } else {
     t26 = $[67];
   }
-  let t27;
-  if ($[68] !== T1 || $[69] !== t14 || $[70] !== t26) {
-    t27 = <T1 flexDirection={t11} borderStyle={t12} borderColor={t13} borderText={t14}>{t26}</T1>;
-    $[68] = T1;
-    $[69] = t14;
-    $[70] = t26;
-    $[71] = t27;
-  } else {
-    t27 = $[71];
-  }
+  const t27 = <T1 flexDirection={t11} borderStyle={t12} borderColor={t13} borderText={t14} width={totalWidth}>{t26}</T1>;
   let t28;
   if ($[72] !== T0 || $[73] !== t27) {
     t28 = <T0>{t27}</T0>;

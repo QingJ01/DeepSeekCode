@@ -23,8 +23,7 @@ export function FeedColumn(t0) {
   } else {
     t1 = $[1];
   }
-  const maxOfAllFeeds = t1;
-  const actualWidth = Math.min(maxOfAllFeeds, maxWidth);
+  const actualWidth = Math.max(0, maxWidth);
   let t2;
   if ($[2] !== actualWidth || $[3] !== feeds) {
     let t3;

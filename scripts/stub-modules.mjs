@@ -138,7 +138,7 @@ try {
     `--outfile="${OUT}"`,
     '--packages=external',
     '--external:bun:*',
-    '--banner:js=$\'#!/usr/bin/env node\\n// Claude Code v0.0.1 (built from source)\\n// Copyright (c) Anthropic PBC. All rights reserved.\\n\'',
+    '--banner:js=$\'#!/usr/bin/env node\\n// Claude Code v0.1.0 (built from source)\\n// Copyright (c) Anthropic PBC. All rights reserved.\\n\'',
     '--allow-overwrite',
     '--log-level=warning',
     '--sourcemap',

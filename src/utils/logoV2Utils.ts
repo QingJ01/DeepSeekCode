@@ -15,10 +15,14 @@ import { loadMessageLogs } from './sessionStorage.js'
 import { getInitialSettings } from './settings/settings.js'
 import { getAPIProvider } from './model/providers.js'
 
-// Layout constants
+// Layout constants. Ink/Yoga borders are rendered and laid out as one-cell
+// terminal UI glyphs, even when surrounding text contains CJK wide characters.
 const MAX_LEFT_WIDTH = 50
 const MAX_USERNAME_LENGTH = 20
-const BORDER_PADDING = 4
+const TERMINAL_SAFE_MARGIN = 2
+const OUTER_BORDER_WIDTH = 2
+const HORIZONTAL_GAP_WIDTH = 2
+const BORDER_PADDING = OUTER_BORDER_WIDTH + TERMINAL_SAFE_MARGIN
 const DIVIDER_WIDTH = 1
 const CONTENT_PADDING = 2
 
@@ -48,26 +52,28 @@ export function calculateLayoutDimensions(
 ): LayoutDimensions {
   if (layoutMode === 'horizontal') {
     const leftWidth = optimalLeftWidth
-    const usedSpace =
-      BORDER_PADDING + CONTENT_PADDING + DIVIDER_WIDTH + leftWidth
-    const availableForRight = columns - usedSpace
+    const totalWidth = Math.max(0, columns - BORDER_PADDING)
+    const reservedWidth =
+      OUTER_BORDER_WIDTH +
+      CONTENT_PADDING +
+      HORIZONTAL_GAP_WIDTH +
+      DIVIDER_WIDTH +
+      leftWidth
+    const availableForRight = totalWidth - reservedWidth
+    const rightWidth = Math.max(0, availableForRight)
 
-    let rightWidth = Math.max(30, availableForRight)
-    const totalWidth = Math.min(
-      leftWidth + rightWidth + DIVIDER_WIDTH + CONTENT_PADDING,
-      columns - BORDER_PADDING,
-    )
-
-    // Recalculate right width if we had to cap the total
-    if (totalWidth < leftWidth + rightWidth + DIVIDER_WIDTH + CONTENT_PADDING) {
-      rightWidth = totalWidth - leftWidth - DIVIDER_WIDTH - CONTENT_PADDING
+    return {
+      leftWidth,
+      rightWidth,
+      totalWidth,
     }
-
-    return { leftWidth, rightWidth, totalWidth }
   }
 
   // Vertical mode
-  const totalWidth = Math.min(columns - BORDER_PADDING, MAX_LEFT_WIDTH + 20)
+  const totalWidth = Math.min(
+    Math.max(0, columns - BORDER_PADDING),
+    MAX_LEFT_WIDTH + 20,
+  )
   return {
     leftWidth: totalWidth,
     rightWidth: totalWidth,
@@ -87,7 +93,7 @@ export function calculateOptimalLeftWidth(
     stringWidth(welcomeMessage),
     stringWidth(truncatedCwd),
     stringWidth(modelLine),
-    20, // Minimum for clawd art
+    20,
   )
   return Math.min(contentWidth + 4, MAX_LEFT_WIDTH) // +4 for padding
 }
@@ -111,7 +117,7 @@ export function truncatePath(path: string, maxLength: number): string {
 
   const separator = '/'
   const ellipsis = '…'
-  const ellipsisWidth = 1 // '…' is always 1 column
+  const ellipsisWidth = stringWidth(ellipsis)
   const separatorWidth = 1
 
   const parts = path.split(separator)
@@ -283,8 +289,9 @@ export function formatModelAndBilling(
   truncatedBilling: string
 } {
   const separator = ' · '
+  const separatorWidth = stringWidth(separator)
   const combinedWidth =
-    stringWidth(modelName) + separator.length + stringWidth(billingType)
+    stringWidth(modelName) + separatorWidth + stringWidth(billingType)
   const shouldSplit = combinedWidth > availableWidth
 
   if (shouldSplit) {
@@ -300,7 +307,7 @@ export function formatModelAndBilling(
     truncatedModel: truncate(
       modelName,
       Math.max(
-        availableWidth - stringWidth(billingType) - separator.length,
+        availableWidth - stringWidth(billingType) - separatorWidth,
         10,
       ),
     ),

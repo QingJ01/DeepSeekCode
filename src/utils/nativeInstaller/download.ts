@@ -202,7 +202,7 @@ export async function downloadVersionFromArtifactory(
 
   const packageJson = {
     name: 'claude-native-installer',
-    version: '0.0.1',
+    version: '0.1.0',
     dependencies: {
       [MACRO.NATIVE_PACKAGE_URL!]: version,
     },
@@ -211,13 +211,13 @@ export async function downloadVersionFromArtifactory(
   // Create package-lock.json with integrity verification for platform-specific package
   const packageLock = {
     name: 'claude-native-installer',
-    version: '0.0.1',
+    version: '0.1.0',
     lockfileVersion: 3,
     requires: true,
     packages: {
       '': {
         name: 'claude-native-installer',
-        version: '0.0.1',
+        version: '0.1.0',
         dependencies: {
           [MACRO.NATIVE_PACKAGE_URL!]: version,
         },

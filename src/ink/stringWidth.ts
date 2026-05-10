@@ -13,9 +13,8 @@ const EMOJI_REGEX = emojiRegex()
  * This is a more accurate alternative to the string-width package that correctly handles
  * characters like ⚠ (U+26A0) which string-width incorrectly reports as width 2.
  *
- * The implementation uses eastAsianWidth directly with ambiguousAsWide: false,
- * which correctly treats ambiguous-width characters as narrow (width 1) as
- * recommended by the Unicode standard for Western contexts.
+ * The implementation uses eastAsianWidth directly, treating ambiguous-width
+ * characters as narrow by default and wide when CJK_WIDTH is enabled.
  */
 function stringWidthJavaScript(str: string): number {
   if (typeof str !== 'string' || str.length === 0) {
@@ -58,7 +57,7 @@ function stringWidthJavaScript(str: string): number {
     for (const char of str) {
       const codePoint = char.codePointAt(0)!
       if (!isZeroWidth(codePoint)) {
-        width += eastAsianWidth(codePoint, { ambiguousAsWide: false })
+        width += getEastAsianCharWidth(codePoint)
       }
     }
     return width
@@ -80,13 +79,39 @@ function stringWidthJavaScript(str: string): number {
     for (const char of grapheme) {
       const codePoint = char.codePointAt(0)!
       if (!isZeroWidth(codePoint)) {
-        width += eastAsianWidth(codePoint, { ambiguousAsWide: false })
+        width += getEastAsianCharWidth(codePoint)
         break
       }
     }
   }
 
   return width
+}
+
+function shouldTreatAmbiguousAsWide(): boolean {
+  const cjkWidth = process.env.CJK_WIDTH
+  return cjkWidth === '1' || cjkWidth?.toLowerCase() === 'true'
+}
+
+const NARROW_AMBIGUOUS_CHARS = new Set<number>([
+  0x2190,
+  0x2191,
+  0x2192,
+  0x2193,
+])
+
+function isNarrowAmbiguousChar(codePoint: number): boolean {
+  return (
+    NARROW_AMBIGUOUS_CHARS.has(codePoint) ||
+    (codePoint >= 0x2500 && codePoint <= 0x257f)
+  )
+}
+
+function getEastAsianCharWidth(codePoint: number): number {
+  return eastAsianWidth(codePoint, {
+    ambiguousAsWide:
+      shouldTreatAmbiguousAsWide() && !isNarrowAmbiguousChar(codePoint),
+  })
 }
 
 function needsSegmentation(str: string): boolean {
@@ -218,5 +243,8 @@ const bunStringWidth =
 const BUN_STRING_WIDTH_OPTS = { ambiguousIsNarrow: true } as const
 
 export const stringWidth: (str: string) => number = bunStringWidth
-  ? str => bunStringWidth(str, BUN_STRING_WIDTH_OPTS)
+  ? str =>
+      shouldTreatAmbiguousAsWide()
+        ? stringWidthJavaScript(str)
+        : bunStringWidth(str, BUN_STRING_WIDTH_OPTS)
   : stringWidthJavaScript

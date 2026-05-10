@@ -3,6 +3,13 @@
 import { stringWidth } from '../ink/stringWidth.js'
 import { getGraphemeSegmenter } from './intl.js'
 
+const ELLIPSIS = '…'
+const ELLIPSIS_WIDTH = stringWidth(ELLIPSIS)
+
+function ellipsisForWidth(maxWidth: number): string {
+  return maxWidth >= ELLIPSIS_WIDTH ? ELLIPSIS : ''
+}
+
 /**
  * Truncates a file path in the middle to preserve both directory context and filename.
  * Width-aware: uses stringWidth() for correct CJK/emoji measurement.
@@ -21,11 +28,11 @@ export function truncatePathMiddle(path: string, maxLength: number): string {
 
   // Handle edge case of very small or non-positive maxLength
   if (maxLength <= 0) {
-    return '…'
+    return ''
   }
 
-  // Need at least room for "…" + something meaningful
-  if (maxLength < 5) {
+  // Need at least room for an ellipsis plus something meaningful
+  if (maxLength < ELLIPSIS_WIDTH + 4) {
     return truncateToWidth(path, maxLength)
   }
 
@@ -37,13 +44,13 @@ export function truncatePathMiddle(path: string, maxLength: number): string {
   const filenameWidth = stringWidth(filename)
 
   // If filename alone is too long, truncate from start
-  if (filenameWidth >= maxLength - 1) {
+  if (filenameWidth >= maxLength - ELLIPSIS_WIDTH) {
     return truncateStartToWidth(path, maxLength)
   }
 
   // Calculate space available for directory prefix
-  // Result format: directory + "…" + filename
-  const availableForDir = maxLength - 1 - filenameWidth // -1 for ellipsis
+  // Result format: directory + ellipsis + filename
+  const availableForDir = maxLength - ELLIPSIS_WIDTH - filenameWidth
 
   if (availableForDir <= 0) {
     // No room for directory, just show filename (truncated if needed)
@@ -52,7 +59,7 @@ export function truncatePathMiddle(path: string, maxLength: number): string {
 
   // Truncate directory and combine
   const truncatedDir = truncateToWidthNoEllipsis(directory, availableForDir)
-  return truncatedDir + '…' + filename
+  return truncatedDir + ELLIPSIS + filename
 }
 
 /**
@@ -62,16 +69,17 @@ export function truncatePathMiddle(path: string, maxLength: number): string {
  */
 export function truncateToWidth(text: string, maxWidth: number): string {
   if (stringWidth(text) <= maxWidth) return text
-  if (maxWidth <= 1) return '…'
+  if (maxWidth <= 0) return ''
+  if (maxWidth <= ELLIPSIS_WIDTH) return ellipsisForWidth(maxWidth)
   let width = 0
   let result = ''
   for (const { segment } of getGraphemeSegmenter().segment(text)) {
     const segWidth = stringWidth(segment)
-    if (width + segWidth > maxWidth - 1) break
+    if (width + segWidth > maxWidth - ELLIPSIS_WIDTH) break
     result += segment
     width += segWidth
   }
-  return result + '…'
+  return result + ELLIPSIS
 }
 
 /**
@@ -81,18 +89,19 @@ export function truncateToWidth(text: string, maxWidth: number): string {
  */
 export function truncateStartToWidth(text: string, maxWidth: number): string {
   if (stringWidth(text) <= maxWidth) return text
-  if (maxWidth <= 1) return '…'
+  if (maxWidth <= 0) return ''
+  if (maxWidth <= ELLIPSIS_WIDTH) return ellipsisForWidth(maxWidth)
   const segments = [...getGraphemeSegmenter().segment(text)]
   let width = 0
   let startIdx = segments.length
   for (let i = segments.length - 1; i >= 0; i--) {
     const segWidth = stringWidth(segments[i]!.segment)
-    if (width + segWidth > maxWidth - 1) break // -1 for '…'
+    if (width + segWidth > maxWidth - ELLIPSIS_WIDTH) break
     width += segWidth
     startIdx = i
   }
   return (
-    '…' +
+    ELLIPSIS +
     segments
       .slice(startIdx)
       .map(s => s.segment)
@@ -144,10 +153,10 @@ export function truncate(
     if (firstNewline !== -1) {
       result = str.substring(0, firstNewline)
       // Ensure total width including ellipsis doesn't exceed maxWidth
-      if (stringWidth(result) + 1 > maxWidth) {
+      if (stringWidth(result) + ELLIPSIS_WIDTH > maxWidth) {
         return truncateToWidth(result, maxWidth)
       }
-      return `${result}…`
+      return `${result}${ELLIPSIS}`
     }
   }
 
