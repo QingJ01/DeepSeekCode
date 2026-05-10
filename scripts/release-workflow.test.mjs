@@ -84,3 +84,8 @@ assert.match(
   /if \(isAbsolute\(normalized\)\) return normalized/,
   'build should preserve absolute importer paths when creating stubs',
 )
+assert.match(
+  buildScript,
+  /\(\?:X\|\\u2718\) \\\[ERROR\\\]/,
+  'build should parse esbuild error blocks on both Windows and Linux runners',
+)

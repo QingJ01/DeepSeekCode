@@ -51,7 +51,7 @@ function importerToBuildPath(importer) {
 
 function parseMissingModules(output) {
   const missingRe =
-    /Could not resolve "([^"]+)"([\s\S]*?)(?=\nX \[ERROR\]|\n\d+ errors?|$)/g
+    /Could not resolve "([^"]+)"([\s\S]*?)(?=\n(?:X|\u2718) \[ERROR\]|\n\d+ errors?|$)/g
   const missing = []
   let match
   while ((match = missingRe.exec(output)) !== null) {
